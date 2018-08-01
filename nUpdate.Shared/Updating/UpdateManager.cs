@@ -26,7 +26,7 @@ namespace nUpdate.Updating
     /// </summary>
     public partial class UpdateManager : IDisposable
     {
-        private readonly string _applicationUpdateDirectory = Path.Combine(Path.GetTempPath(), "nUpdate",
+        private readonly string _applicationUpdateDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName(),
             Application.ProductName);
 
         private readonly Dictionary<UpdateVersion, string> _packageFilePaths = new Dictionary<UpdateVersion, string>();
@@ -377,7 +377,7 @@ namespace nUpdate.Updating
         /// </summary>
         public void InstallPackage()
         {
-            var installerDirectory = Path.Combine(Path.GetTempPath(), "nUpdate Installer");
+            var installerDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             var dotNetZipPath = Path.Combine(installerDirectory, "Ionic.Zip.dll");
             var guiInterfacePath = Path.Combine(installerDirectory, "nUpdate.UpdateInstaller.Client.GuiInterface.dll");
             var jsonNetPath = Path.Combine(installerDirectory, "Newtonsoft.Json.dll");
