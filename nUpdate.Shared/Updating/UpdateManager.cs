@@ -1,5 +1,11 @@
 // Copyright © Dominic Beger 2018
 
+using nUpdate.Core;
+using nUpdate.Exceptions;
+using nUpdate.Internal.Core;
+using nUpdate.Internal.Core.Localization;
+using nUpdate.Internal.Core.Operations;
+using nUpdate.Internal.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,12 +18,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using nUpdate.Core;
-using nUpdate.Exceptions;
-using nUpdate.Internal.Core;
-using nUpdate.Internal.Core.Localization;
-using nUpdate.Internal.Core.Operations;
-using nUpdate.Internal.Properties;
 
 namespace nUpdate.Updating
 {
@@ -26,8 +26,8 @@ namespace nUpdate.Updating
     /// </summary>
     public partial class UpdateManager : IDisposable
     {
-        private readonly string _applicationUpdateDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName(),
-            Application.ProductName);
+        private string _productName = Application.ProductName;
+        private string _applicationUpdateDirectory => Path.Combine(Path.GetTempPath(), $"nUpdate", _productName);
 
         private readonly Dictionary<UpdateVersion, string> _packageFilePaths = new Dictionary<UpdateVersion, string>();
 
@@ -40,6 +40,17 @@ namespace nUpdate.Updating
 
         private LocalizationProperties _lp;
         private CancellationTokenSource _searchCancellationTokenSource = new CancellationTokenSource();
+
+        public UpdateManager(Uri updateConfigurationFileUri, string publicKey,
+            CultureInfo languageCulture = null, UpdateVersion currentVersion = null, string productName = null)
+            : this(updateConfigurationFileUri, publicKey, languageCulture, currentVersion)
+        {
+            if (!string.IsNullOrEmpty(productName))
+            {
+                _productName = productName;
+            }
+
+        }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateManager" /> class.
@@ -60,7 +71,7 @@ namespace nUpdate.Updating
         ///     steps of the category "Copy data" which will automatically generate the necessary code for you.
         /// </remarks>
         public UpdateManager(Uri updateConfigurationFileUri, string publicKey,
-            CultureInfo languageCulture = null, UpdateVersion currentVersion = null)
+        CultureInfo languageCulture = null, UpdateVersion currentVersion = null)
         {
             UpdateConfigurationFileUri = updateConfigurationFileUri ??
                                          throw new ArgumentNullException(nameof(updateConfigurationFileUri));
@@ -394,7 +405,7 @@ namespace nUpdate.Updating
 
             //if (!File.Exists(unpackerAppPdbPath))
             //    File.WriteAllBytes(unpackerAppPath, Resources.nUpdate_UpdateInstaller_Pdb);
-            
+
             string[] args =
             {
                 $"\"{string.Join("%", _packageFilePaths.Select(item => item.Value))}\"",
