@@ -62,7 +62,10 @@ namespace nUpdate.UpdateInstaller
                         catch (IOException ex)
                         {
                             if (FileHelper.IsFileLocked(ex))
+                            {
                                 _progressReporter.Fail(new Exception(string.Format(Program.FileInUseError, aimPath)));
+                                Thread.Sleep(1000);
+                            }
                             else
                                 throw;
                         }
