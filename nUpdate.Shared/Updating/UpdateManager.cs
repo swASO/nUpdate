@@ -41,16 +41,6 @@ namespace nUpdate.Updating
         private LocalizationProperties _lp;
         private CancellationTokenSource _searchCancellationTokenSource = new CancellationTokenSource();
 
-        public UpdateManager(Uri updateConfigurationFileUri, string publicKey,
-            CultureInfo languageCulture = null, UpdateVersion currentVersion = null, string productName = null)
-            : this(updateConfigurationFileUri, publicKey, languageCulture, currentVersion)
-        {
-            if (!string.IsNullOrEmpty(productName))
-            {
-                _productName = productName;
-            }
-
-        }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateManager" /> class.
@@ -71,8 +61,13 @@ namespace nUpdate.Updating
         ///     steps of the category "Copy data" which will automatically generate the necessary code for you.
         /// </remarks>
         public UpdateManager(Uri updateConfigurationFileUri, string publicKey,
-        CultureInfo languageCulture = null, UpdateVersion currentVersion = null)
+        CultureInfo languageCulture = null, UpdateVersion currentVersion = null, string productName = null)
         {
+            if (!string.IsNullOrEmpty(productName))
+            {
+                _productName = productName;
+            }
+
             UpdateConfigurationFileUri = updateConfigurationFileUri ??
                                          throw new ArgumentNullException(nameof(updateConfigurationFileUri));
 
